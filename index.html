@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizador de Ordenação</title>
+    <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+    <div class="navbar">    
+        <div class="title">Visualizador de Ordenação</div>
+        <div class="navItems"> 
+            <div>
+                <a href="https://google.com"><button class="btn btnTipo2">Acessar Formulário</button></a>
+            </div>
+            <div class="botoesAlgoritmos" id="botoesAlgoritmos"> 
+                <button alg="bubble" class="btn btnTransparente active">BubbleSort</button>
+                <button alg="selection" class="btn btnTransparente">SelectioneSort</button>
+                <button alg="insertion" class="btn btnTransparente">InsertionSort</button>
+                <button alg="merge" class="btn btnTransparente">MergeSort</button>
+                <button alg="quick" class="btn btnTransparente">QuickSort</button>
+            </div>
+            <div style="display:flex; gap:8px;" id="grupoInputVetor">
+                <input id="inputVetor" type="text" placeholder="Insira seu vetor [1,7,3,...] ou o tamanho desejado"/>
+                <button id="botaoVetor" class="btn btnTipo1">⟳ Gerar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="layout">
+        <div class="sidebar collapsed" id="barraQuestoes">
+            <button class="btn btnTipo1 toggleSidebar" id="barraToggle">❯</button>
+
+            <div class="sidebarConteudo">
+                <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <div id="questoesCount" style="font-size: 20px; font-weight: 700;">Questões: 0 / 0</div>
+                </div>
+
+                <label class="autoPauseLabel">
+                    <input type="checkbox" id="autoPauseCheck"> Pausar a receber questão
+                </label>
+
+                <div class="questaoAtual" id="questaoAtual">Observando o algoritmo...</div>
+                <div class="questaoStatus" id="questaoStatus"></div>
+                <div class="questaoOpcoes" id="questaoOpcoes"></div>
+                <div class="historico" id="questaoHistorico"></div>  
+            </div>
+        </div>
+
+        <div class="visualizacao"> 
+            <div class="status">
+                <span>Comparações: <strong id="comparacoesCount">0</strong></span>
+                <span>Trocas: <strong id="trocasCount">0</strong></span>
+                <span>Frame: <strong id="frameCount">0</strong></span>
+            </div>
+
+            <div class="paineis"> 
+                <div class="barrasPainel">
+                    <div class="barrasLegenda">
+                        <span><i class="c normal"></i>Normal</span>
+                        <span><i class="c comparando"></i>Comparando</span>
+                        <span><i class="c trocando"></i>Trocando</span>
+                        <span><i class="c ordenado"></i>Ordenado</span>
+                        <span><i class="c pivo"></i>Pivô/Mín.</span>
+                    </div>
+
+                    <div class="barras" id="barras"></div>
+                </div>
+
+                <div class="codigoPainel">
+                    <div class="codigoCabecalho">Pseudocódigo</div>
+                    <div class="codigo" id="codigo"></div>
+                </div>
+            </div>
+
+            <div class="controlesPainel">
+                <div class="controlesSlider">
+                    <div class="containerSlider"> 
+                        <span style="font-size: 14px; color: var(--textMuted); font-weight: bold;">Velocidade:</span>
+                        <input type="range" id="velocidadeSlider" min="1" max="10" value="1" title="Ajusta velocidade">
+                    </div>
+                </div>
+
+                <div class="controlesBotoes">
+                    <button id="botaoAnt" class="btn btnTipo1">◀ Anterior</button>
+                    <button id="botaoPlay" class="btn btnTipo1">▶ Play</button>
+                    <button id="botaoProx" class="btn btnTipo1">Próximo ▶</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlayConsentimento" id="overlayConsentimento">
+        <div class="modalConsentimento">
+            <h2>Termo de Consentimento Livre e Esclarecido</h2>
+
+            <div class="modalConsentimentoTexto">
+                <p>Você está sendo convidado(a) a participar de uma pesquisa acadêmica, desenvolvida como parte de um Trabalho de Conclusão de Curso (TCC), cujo objetivo é avaliar o uso desta ferramenta de visualização de algoritmos de ordenação como recurso de apoio ao ensino.</p>
+
+                <p><strong>Participação voluntária.</strong> Sua participação é inteiramente voluntária. Você pode deixar de usar a plataforma a qualquer momento, sem qualquer prejuízo, penalidade ou necessidade de justificativa.</p>
+
+                <p><strong>Anonimato.</strong> A plataforma não solicita nem armazena seu nome, e-mail ou qualquer outro dado que permita identificá-lo(a) pessoalmente. Suas interações (algoritmo escolhido, navegação entre etapas, respostas às perguntas) são associadas apenas a um identificador de sessão gerado aleatoriamente pelo seu navegador.</p>
+
+                <p><strong>Confidencialidade.</strong> Os dados coletados serão utilizados exclusivamente para fins desta pesquisa acadêmica, analisados de forma agregada, e não serão compartilhados com terceiros fora do contexto deste trabalho.</p>
+
+                <p><strong>Riscos e benefícios.</strong> Não há riscos previsíveis além dos associados ao uso comum de um site educacional. Como benefício, você tem acesso gratuito a uma ferramenta interativa de estudo de algoritmos de ordenação.</p>
+
+                <p>Em caso de dúvidas sobre esta pesquisa, você pode entrar em contato com <strong>João Marcos Nascimento</strong>, pelo e-mail <strong>joao.nascimento@fagammon.edu.br</strong>, sob orientação do professor Luccas Rafael Martins Pinto.</p>
+
+                <p>Ao marcar a caixa abaixo e clicar em "Eu concordo", você declara que leu e compreendeu estas informações e concorda em participar voluntariamente desta pesquisa.</p>
+            </div>
+
+            <label class="consentimentoCheckLabel">
+                <input type="checkbox" id="consentimentoCheck">
+                Li e compreendi as informações acima, e concordo em participar voluntariamente desta pesquisa.
+            </label>
+
+            <button id="btnConsentimentoOk" class="btn btnTipo1" disabled>Eu concordo</button>
+        </div>
+    </div>
+
+    <div class="overlayTutorial" id="overlayTutorial">
+        <div class="tutorialSpot" id="tutorialSpot"></div>
+        <div class="tutorialCaixa" id="tutorialCaixa">
+            <div class="tutorialTexto" id="tutorialTexto"></div>
+            <div class="tutorialRodape">
+                <button id="btnTutorialPular" class="btn btnTransparente">Pular tutorial</button>
+                <div class="tutorialProgresso" id="tutorialProgresso"></div>
+                <button id="btnTutorialProx" class="btn btnTipo1">Próximo ▶</button>
+            </div>
+        </div>
+    </div>
+
+    <script defer src="onboarding.js"></script>
+    <script type="module" src="analytics.js"></script>
+    <script defer src="questoes.js"></script>
+    <script defer src="engine.js"></script>
+    <script defer src="visualizacao.js"></script>
+
+</body>
+</html>
