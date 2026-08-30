@@ -2,20 +2,29 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Painel do Professor</title>
-  <link rel="stylesheet" href="style-5.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="login">
-    <input id="email" type="email" placeholder="E-mail">
-    <input id="senha" type="password" placeholder="Senha">
-    <button id="btnLogin">Entrar</button>
+  <div id="login" class="loginOverlay">
+    <div class="loginCard">
+      <h1>Painel do Professor</h1>
+      <input id="email" type="email" placeholder="E-mail" class="inputCampo">
+      <input id="senha" type="password" placeholder="Senha" class="inputCampo">
+      <button id="btnLogin" class="btn btnTipo1">Entrar</button>
+    </div>
   </div>
 
-  <div id="painel" style="display:none">
-    <button id="btnExportar">Baixar CSV da sessão atual</button>
-    <button id="btnLimpar">Baixar e limpar sessão</button>
-    <button id="btnLogout">Sair</button>
+  <div id="painel" class="painelContainer hidden">
+    <div class="painelHeader">
+      <h2>Gerenciar Sessão</h2>
+      <button id="btnLogout" class="btn btnTransparente">Sair</button>
+    </div>
+    <div class="painelAcoes">
+      <button id="btnExportar" class="btn btnTipo1">Baixar CSV da sessão atual</button>
+      <button id="btnLimpar" class="btn btnTipo2">Baixar e limpar sessão</button>
+    </div>
   </div>
 
   <script type="module" src="painel-professor.js"></script>

@@ -11,14 +11,14 @@
         <div class="title">Visualizador de Ordenação</div>
         <div class="navItems"> 
             <div>
-                <a href="https://google.com"><button class="btn btnTipo2">Acessar Formulário</button></a>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdskiqTvATCaqmy9xe_NHFZSHCVKtCfX3AGdUFvc1UUndcptg/viewform?usp=publish-editor" target="_blank" rel="noopener noreferrer"><button class="btn btnTipo2">Acessar Formulário</button></a>
             </div>
-            <div class="botoesAlgoritmos" id="botoesAlgoritmos"> 
-                <button alg="bubble" class="btn btnTransparente active">BubbleSort</button>
-                <button alg="selection" class="btn btnTransparente">SelectioneSort</button>
-                <button alg="insertion" class="btn btnTransparente">InsertionSort</button>
-                <button alg="merge" class="btn btnTransparente">MergeSort</button>
-                <button alg="quick" class="btn btnTransparente">QuickSort</button>
+            <div class="botoesAlgoritmos" id="botoesAlgoritmos">
+                <button alg="bubble" class="btn btnTransparente active" data-tip="Compara elementos vizinhos e troca os que estão fora de ordem. A cada passagem completa, o maior valor restante “borbulha” até o fim. Fácil de entender, porém lento: O(n²).">BubbleSort</button>
+                <button alg="selection" class="btn btnTransparente" data-tip="A cada rodada, varre a parte ainda não ordenada para achar o menor valor e o coloca no lugar com uma única troca. Faz sempre ~n² comparações, mas no máximo n−1 trocas.">SelectionSort</button>
+                <button alg="insertion" class="btn btnTransparente" data-tip="Constrói o trecho ordenado da esquerda para a direita, inserindo cada novo elemento na posição certa entre os já ordenados. Muito eficiente quando o vetor já está quase ordenado: O(n).">InsertionSort</button>
+                <button alg="merge" class="btn btnTransparente" data-tip="Divide o vetor ao meio repetidamente até restarem pedaços de 1 elemento e depois intercala os pedaços em ordem. Garante O(n log n) sempre e é estável, mas usa memória auxiliar.">MergeSort</button>
+                <button alg="quick" class="btn btnTransparente" data-tip="Escolhe um pivô e reorganiza o vetor em menores e maiores que ele; em seguida ordena cada lado recursivamente. Rápido na prática (O(n log n) em média), O(n²) no pior caso.">QuickSort</button>
             </div>
             <div style="display:flex; gap:8px;" id="grupoInputVetor">
                 <input id="inputVetor" type="text" placeholder="Insira seu vetor [1,7,3,...] ou o tamanho desejado"/>
@@ -68,7 +68,13 @@
                 </div>
 
                 <div class="codigoPainel">
-                    <div class="codigoCabecalho">Pseudocódigo</div>
+                    <div class="codigoTopo">
+                        <div class="codigoCabecalho">Pseudocódigo</div>
+                        <div class="codigoModo" role="group" aria-label="Modo de exibição do código">
+                            <button type="button" id="btnModoPseudo" class="modoBtn ativo">Pseudocódigo</button>
+                            <button type="button" id="btnModoExplicativo" class="modoBtn">Explicação</button>
+                        </div>
+                    </div>
                     <div class="codigo" id="codigo"></div>
                 </div>
             </div>
@@ -105,7 +111,7 @@
 
                 <p><strong>Riscos e benefícios.</strong> Não há riscos previsíveis além dos associados ao uso comum de um site educacional. Como benefício, você tem acesso gratuito a uma ferramenta interativa de estudo de algoritmos de ordenação.</p>
 
-                <p>Em caso de dúvidas sobre esta pesquisa, você pode entrar em contato com <strong>João Marcos Nascimento</strong>, pelo e-mail <strong>joao.nascimento@fagammon.edu.br</strong>, sob orientação do professor Luccas Rafael Martins Pinto.</p>
+                <p>Em caso de dúvidas sobre esta pesquisa, você pode entrar em contato com <strong>João Marcos Nascimento</strong>, pelo e-mail <strong>joao.nascimento@fagammon.edu.br</strong>, sob orientação de Luccas Rafael Martins Pinto.</p>
 
                 <p>Ao marcar a caixa abaixo e clicar em "Eu concordo", você declara que leu e compreendeu estas informações e concorda em participar voluntariamente desta pesquisa.</p>
             </div>
@@ -131,7 +137,7 @@
         </div>
     </div>
 
-    <script defer src="onboarding.js"></script>
+    <script defer src="tutorial.js"></script>
     <script type="module" src="analytics.js"></script>
     <script defer src="questoes.js"></script>
     <script defer src="engine.js"></script>

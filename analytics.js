@@ -1,13 +1,14 @@
 import { supabase } from "./supabase-config.js";
 
-const sessionId = sessionStorage.getItem("sessionId") ||
+const sessionId =
+  sessionStorage.getItem("sessionId") ||
   (() => {
     const id = "aluno_" + Math.random().toString(36).slice(2, 10);
     sessionStorage.setItem("sessionId", id);
     return id;
   })();
 
-const sessaoPronta = supabase.auth.signInAnonymously().catch(err => {
+const sessaoPronta = supabase.auth.signInAnonymously().catch((err) => {
   console.error("Falha no login anônimo:", err);
 });
 
@@ -21,7 +22,7 @@ const Tracker = {
       algoritmo,
       frame_idx: frameIdx,
       acao,
-      detalhes
+      detalhes,
     };
     this.historico.push(evento);
 
@@ -35,8 +36,8 @@ const Tracker = {
   },
 
   obterRespostasQuestoes: function () {
-    return this.historico.filter(h => h.acao === 'RESPONDER_QUESTAO');
-  }
+    return this.historico.filter((h) => h.acao === "RESPONDER_QUESTAO");
+  },
 };
 
 window.Tracker = Tracker;
