@@ -5,15 +5,6 @@ function mostrarPainel(logado) {
   document.getElementById("painel").classList.toggle("hidden", !logado);
 }
 
-async function sessaoValida() {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (session?.user?.is_anonymous) {
-    await supabase.auth.signOut();
-    return false;
-  }
-  return !!session;
-}
-
 supabase.auth.getSession().then(async ({ data: { session } }) => {
   const valida = session && !session.user?.is_anonymous;
   if (!valida && session) {
@@ -46,16 +37,34 @@ document.getElementById("btnLogout").addEventListener("click", async () => {
   mostrarPainel(false);
 });
 
+const TAMANHO_PAGINA = 1000;
+
 async function buscarLogs() {
-  const { data, error } = await supabase
-    .from("logs")
-    .select("*")
-    .order("timestamp");
-  if (error) {
-    alert("Erro ao buscar logs: " + error.message);
-    return [];
+  const todos = [];
+  let pagina = 0;
+
+  while (true) {
+    const inicio = pagina * TAMANHO_PAGINA;
+    const fim = inicio + TAMANHO_PAGINA - 1;
+    const { data, error } = await supabase
+      .from("logs")
+      .select("*")
+      .order("timestamp", { ascending: true })
+      .order("id", { ascending: true })
+      .range(inicio, fim);
+
+    if (error) {
+      alert("Erro ao buscar logs: " + error.message);
+      return [];
+    }
+    if (!data || data.length === 0) break;
+
+    todos.push(...data);
+    if (data.length < TAMANHO_PAGINA) break;
+    pagina++;
   }
-  return data ?? [];
+
+  return todos;
 }
 
 function gerarCSV(logs) {

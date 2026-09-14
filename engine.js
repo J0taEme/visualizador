@@ -1,8 +1,7 @@
 class BaseSort {
   constructor(algoritmo, arr) {
-    this.algoritmo = algoritmo;
     this.arr = arr;
-    this.questoes = new GerenciadorQuestoes(algoritmo, arr);
+    this.questoes = new GerenciadorQuestoes(arr);
   }
 
   addFrame(frames, arr, state, extras = {}) {
@@ -21,21 +20,6 @@ class BaseSort {
     });
   }
 
-  _injetarQuestoesPreExecucao(frames) {
-    if (frames.length === 0) return;
-    const questoes = this.questoes.preExecucao();
-    questoes.forEach((q, i) => {
-      if (frames[i]) frames[i].questao = q;
-    });
-  }
-
-  _injetarQuestaoFinal(frames, nomeAlg) {
-    if (frames.length === 0) return frames;
-    const last = frames[frames.length - 1];
-    const q = this.questoes.questaoFinal(nomeAlg, last);
-    if (q) last.questao = q;
-    return frames;
-  }
 }
 
 class BubbleSort extends BaseSort {
@@ -47,28 +31,26 @@ class BubbleSort extends BaseSort {
     const array = [...this.arr],
       frames = [],
       n = array.length;
-    let st = { trocas: 0, comparacoes: 0, ordenados: [] };
+    this.st = { trocas: 0, comparacoes: 0, ordenados: [] };
 
-    this.addFrame(frames, array, st, { linhasAtivas: [1, 2, 3, 4] });
+    this.addFrame(frames, array, this.st, { linhasAtivas: [1, 2, 3, 4] });
 
     for (let i = 0; i < n - 1; i++) {
-      st.ordenados = Array.from({ length: i }, (_, k) => n - 1 - k);
+      this.st.ordenados = Array.from({ length: i }, (_, k) => n - 1 - k);
 
       let qRodada =
-        i >= 1 &&
-        n - i >= 3 &&
-        this.questoes.podeMostrarDinamica("rodada", 2)
+        i >= 1 && n - i >= 3 && this.questoes.podeMostrarDinamica("rodada", 2)
           ? Q_ComparacoesRodada(n - i, "passagem", this.questoes.seed)
           : null;
 
       for (let j = 0; j < n - i - 1; j++) {
-        st.comparacoes++;
+        this.st.comparacoes++;
 
         let naoTroca = array[j] <= array[j + 1];
         let qRetro =
           !qRodada &&
           naoTroca &&
-          st.comparacoes % 13 === 0 &&
+          this.st.comparacoes % 13 === 0 &&
           this.questoes.podeMostrarDinamica("retro", 2)
             ? Q_PorQueNaoTrocou(array[j], array[j + 1], this.questoes.seed)
             : null;
@@ -76,12 +58,12 @@ class BubbleSort extends BaseSort {
         let qComp =
           !qRodada &&
           !qRetro &&
-          st.comparacoes % 11 === 0 &&
+          this.st.comparacoes % 11 === 0 &&
           this.questoes.podeMostrarDinamica("predicao", 2)
             ? Q_PredicaoTroca(array[j], array[j + 1], this.questoes.seed)
             : null;
 
-        this.addFrame(frames, array, st, {
+        this.addFrame(frames, array, this.st, {
           comparando: [j, j + 1],
           linhasAtivas: [1],
           linhaSeta: 1,
@@ -90,26 +72,21 @@ class BubbleSort extends BaseSort {
         qRodada = null;
 
         if (array[j] > array[j + 1]) {
-          this.addFrame(frames, array, st, {
+          this.addFrame(frames, array, this.st, {
             trocando: [j, j + 1],
             linhasAtivas: [1, 2],
             linhaSeta: 2,
           });
           [array[j], array[j + 1]] = [array[j + 1], array[j]];
-          st.trocas++;
+          this.st.trocas++;
 
           let qTroca =
-            st.trocas > 0 &&
-            st.trocas % 8 === 0 &&
+            this.st.trocas > 0 &&
+            this.st.trocas % 8 === 0 &&
             this.questoes.podeMostrarDinamica("trocas", 2)
-              ? Q_Contagem(
-                  "trocas",
-                  st.trocas,
-                  this.questoes.seed,
-                  array.slice(),
-                )
+              ? Q_Contagem("trocas", this.st.trocas, this.questoes.seed, this.arr, this.questoes.ultimoIndice)
               : null;
-          this.addFrame(frames, array, st, {
+          this.addFrame(frames, array, this.st, {
             trocando: [j, j + 1],
             linhasAtivas: [1, 2],
             linhaSeta: 2,
@@ -118,7 +95,7 @@ class BubbleSort extends BaseSort {
         }
       }
 
-      st.ordenados = Array.from({ length: i + 1 }, (_, k) => n - 1 - k);
+      this.st.ordenados = Array.from({ length: i + 1 }, (_, k) => n - 1 - k);
 
       let qInv =
         i + 1 >= 3 &&
@@ -127,18 +104,17 @@ class BubbleSort extends BaseSort {
           ? Q_JaFixadas("direita", i + 1, "Bubble Sort", this.questoes.seed)
           : null;
 
-      this.addFrame(frames, array, st, {
+      this.addFrame(frames, array, this.st, {
         linhasAtivas: [3, 4],
         linhaSeta: 4,
         questao: qInv,
       });
     }
 
-    st.ordenados = Array.from({ length: n }, (_, k) => k);
-    this.addFrame(frames, array, st);
+    this.st.ordenados = Array.from({ length: n }, (_, k) => k);
+    this.addFrame(frames, array, this.st);
 
-    this._injetarQuestoesPreExecucao(frames);
-    return this._injetarQuestaoFinal(frames, "Bubble Sort");
+    return frames;
   }
 }
 
@@ -151,13 +127,15 @@ class SelectionSort extends BaseSort {
     const array = [...this.arr],
       frames = [],
       n = array.length;
-    let st = { trocas: 0, comparacoes: 0, ordenados: [] };
+    this.st = { trocas: 0, comparacoes: 0, ordenados: [] };
 
-    this.addFrame(frames, array, st, { linhasAtivas: [1, 2, 3, 4, 5, 6] });
+    this.addFrame(frames, array, this.st, {
+      linhasAtivas: [1, 2, 3, 4, 5, 6],
+    });
 
     for (let i = 0; i < n - 1; i++) {
       let minIdx = i;
-      st.ordenados = Array.from({ length: i }, (_, k) => k);
+      this.st.ordenados = Array.from({ length: i }, (_, k) => k);
 
       let qRodada =
         i % 3 === 1 &&
@@ -166,7 +144,7 @@ class SelectionSort extends BaseSort {
           ? Q_ComparacoesRodada(n - i, "rodada", this.questoes.seed)
           : null;
 
-      this.addFrame(frames, array, st, {
+      this.addFrame(frames, array, this.st, {
         pivo: minIdx,
         linhasAtivas: [1, 2],
         linhaSeta: 2,
@@ -174,14 +152,14 @@ class SelectionSort extends BaseSort {
       });
 
       for (let j = i + 1; j < n; j++) {
-        st.comparacoes++;
+        this.st.comparacoes++;
 
         let qComp =
-          st.comparacoes % 9 === 0 &&
+          this.st.comparacoes % 9 === 0 &&
           this.questoes.podeMostrarDinamica("predicao", 2)
             ? Q_SelectionMin(array[minIdx], array[j], this.questoes.seed)
             : null;
-        this.addFrame(frames, array, st, {
+        this.addFrame(frames, array, this.st, {
           comparando: [j],
           pivo: minIdx,
           linhasAtivas: [3],
@@ -191,7 +169,7 @@ class SelectionSort extends BaseSort {
 
         if (array[j] < array[minIdx]) {
           minIdx = j;
-          this.addFrame(frames, array, st, {
+          this.addFrame(frames, array, this.st, {
             pivo: minIdx,
             linhasAtivas: [3, 4],
             linhaSeta: 4,
@@ -200,26 +178,27 @@ class SelectionSort extends BaseSort {
       }
 
       if (minIdx !== i) {
-        this.addFrame(frames, array, st, {
+        this.addFrame(frames, array, this.st, {
           trocando: [i, minIdx],
           linhasAtivas: [5],
           linhaSeta: 5,
         });
         [array[i], array[minIdx]] = [array[minIdx], array[i]];
-        st.trocas++;
+        this.st.trocas++;
 
         let qTroca =
-          st.trocas > 0 &&
-          st.trocas % 5 === 0 &&
+          this.st.trocas > 0 &&
+          this.st.trocas % 5 === 0 &&
           this.questoes.podeMostrarDinamica("trocas", 2)
             ? Q_Contagem(
                 "trocas definitivas",
-                st.trocas,
+                this.st.trocas,
                 this.questoes.seed,
-                array.slice(),
+                this.arr,
+                this.questoes.ultimoIndice,
               )
             : null;
-        this.addFrame(frames, array, st, {
+        this.addFrame(frames, array, this.st, {
           trocando: [i, minIdx],
           linhasAtivas: [5],
           linhaSeta: 5,
@@ -227,7 +206,7 @@ class SelectionSort extends BaseSort {
         });
       }
 
-      st.ordenados = Array.from({ length: i + 1 }, (_, k) => k);
+      this.st.ordenados = Array.from({ length: i + 1 }, (_, k) => k);
 
       let qInv =
         i + 1 >= 3 &&
@@ -236,18 +215,17 @@ class SelectionSort extends BaseSort {
           ? Q_JaFixadas("esquerda", i + 1, "Selection Sort", this.questoes.seed)
           : null;
 
-      this.addFrame(frames, array, st, {
+      this.addFrame(frames, array, this.st, {
         linhasAtivas: [6],
         linhaSeta: 6,
         questao: qInv,
       });
     }
 
-    st.ordenados = Array.from({ length: n }, (_, k) => k);
-    this.addFrame(frames, array, st);
+    this.st.ordenados = Array.from({ length: n }, (_, k) => k);
+    this.addFrame(frames, array, this.st);
 
-    this._injetarQuestoesPreExecucao(frames);
-    return this._injetarQuestaoFinal(frames, "Selection Sort");
+    return frames;
   }
 }
 
@@ -260,9 +238,9 @@ class InsertionSort extends BaseSort {
     const array = [...this.arr],
       frames = [],
       n = array.length;
-    let st = { trocas: 0, comparacoes: 0, ordenados: [] };
+    this.st = { trocas: 0, comparacoes: 0, ordenados: [] };
 
-    this.addFrame(frames, array, st, { linhasAtivas: [1, 2, 3, 4, 5] });
+    this.addFrame(frames, array, this.st, { linhasAtivas: [1, 2, 3, 4, 5] });
 
     for (let i = 1; i < n; i++) {
       let j = i;
@@ -273,13 +251,13 @@ class InsertionSort extends BaseSort {
           : null;
 
       while (j > 0) {
-        st.comparacoes++;
+        this.st.comparacoes++;
 
         let vaiParar = !(array[j] < array[j - 1]);
         let qRetro =
           !qDeslocamentosPendente &&
           vaiParar &&
-          st.comparacoes % 12 === 0 &&
+          this.st.comparacoes % 12 === 0 &&
           this.questoes.podeMostrarDinamica("retro", 2)
             ? Q_PorQueNaoTrocou(array[j - 1], array[j], this.questoes.seed)
             : null;
@@ -287,7 +265,7 @@ class InsertionSort extends BaseSort {
         let qComp =
           !qDeslocamentosPendente &&
           !qRetro &&
-          st.comparacoes % 11 === 0 &&
+          this.st.comparacoes % 11 === 0 &&
           this.questoes.podeMostrarDinamica("predicao", 2)
             ? Q_PredicaoTroca(array[j - 1], array[j], this.questoes.seed)
             : null;
@@ -295,7 +273,7 @@ class InsertionSort extends BaseSort {
 
         qDeslocamentosPendente = null;
 
-        this.addFrame(frames, array, st, {
+        this.addFrame(frames, array, this.st, {
           comparando: [j, j - 1],
           linhasAtivas: [2, 4],
           linhaSeta: 2,
@@ -303,26 +281,27 @@ class InsertionSort extends BaseSort {
         });
 
         if (array[j] < array[j - 1]) {
-          this.addFrame(frames, array, st, {
+          this.addFrame(frames, array, this.st, {
             trocando: [j, j - 1],
             linhasAtivas: [3, 4],
             linhaSeta: 3,
           });
           [array[j], array[j - 1]] = [array[j - 1], array[j]];
-          st.trocas++;
+          this.st.trocas++;
 
           let qTroca =
-            st.trocas > 0 &&
-            st.trocas % 9 === 0 &&
+            this.st.trocas > 0 &&
+            this.st.trocas % 9 === 0 &&
             this.questoes.podeMostrarDinamica("trocas", 2)
               ? Q_Contagem(
                   "trocas adjacentes",
-                  st.trocas,
+                  this.st.trocas,
                   this.questoes.seed,
-                  array.slice(),
+                  this.arr,
+                  this.questoes.ultimoIndice,
                 )
               : null;
-          this.addFrame(frames, array, st, {
+          this.addFrame(frames, array, this.st, {
             trocando: [j, j - 1],
             linhasAtivas: [3, 4],
             linhaSeta: 3,
@@ -336,21 +315,20 @@ class InsertionSort extends BaseSort {
         i >= 3 &&
         i % 4 === 2 &&
         this.questoes.podeMostrarDinamica("invariante", 2)
-          ? Q_JaFixadas("nenhum", 0, "Insertion Sort", this.questoes.seed)
+          ? Q_JaFixadas("nenhum", 0, "Insertion Sort", this.questoes.seed, this.questoes.ultimoIndice)
           : null;
 
-      this.addFrame(frames, array, st, {
+      this.addFrame(frames, array, this.st, {
         linhasAtivas: [5],
         linhaSeta: 5,
         questao: qInv,
       });
     }
 
-    st.ordenados = Array.from({ length: n }, (_, k) => k);
-    this.addFrame(frames, array, st);
+    this.st.ordenados = Array.from({ length: n }, (_, k) => k);
+    this.addFrame(frames, array, this.st);
 
-    this._injetarQuestoesPreExecucao(frames);
-    return this._injetarQuestaoFinal(frames, "Insertion Sort");
+    return frames;
   }
 }
 
@@ -368,8 +346,7 @@ class MergeSort extends BaseSort {
     this.st.ordenados = Array.from({ length: array.length }, (_, k) => k);
     this.addFrame(frames, array, this.st);
 
-    this._injetarQuestoesPreExecucao(frames);
-    return this._injetarQuestaoFinal(frames, "Merge Sort");
+    return frames;
   }
 
   dividir(array, esq, dir, frames) {
@@ -415,7 +392,7 @@ class MergeSort extends BaseSort {
       this.st.comparacoes++;
 
       let qMerge =
-        this.st.comparacoes % 10 === 0 &&
+        this.st.comparacoes % 3 === 0 &&
         this.questoes.podeMostrarDinamica("predicao", 2)
           ? Q_MergeDesce(temp[i], temp[j], this.questoes.seed)
           : null;
@@ -479,21 +456,22 @@ class MergeSort extends BaseSort {
 
     let qTrocas =
       this.st.atribuicoes > 0 &&
-      this.st.atribuicoes % 10 === 0 &&
+      this.st.atribuicoes % 4 === 0 &&
       this.questoes.podeMostrarDinamica("trocas", 2)
         ? Q_Contagem(
             "atribuicoes",
             this.st.atribuicoes,
             this.questoes.seed,
-            array.slice(),
+            this.arr,
+            this.questoes.ultimoIndice,
           )
         : null;
 
     let qInv =
       !qTrocas &&
-      this.st.comparacoes % 17 === 0 &&
+      this.st.comparacoes % 5 === 0 &&
       this.questoes.podeMostrarDinamica("invariante", 2)
-        ? Q_JaFixadas("nenhum", 0, "Merge Sort", this.questoes.seed)
+        ? Q_JaFixadas("nenhum", 0, "Merge Sort", this.questoes.seed, this.questoes.ultimoIndice)
         : null;
 
     pintar();
@@ -520,8 +498,7 @@ class QuickSort extends BaseSort {
     this.st.ordenados = Array.from({ length: array.length }, (_, k) => k);
     this.addFrame(frames, array, this.st);
 
-    this._injetarQuestoesPreExecucao(frames);
-    return this._injetarQuestaoFinal(frames, "Quick Sort");
+    return frames;
   }
 
   _quickSort(array, esq, dir, frames) {
@@ -579,8 +556,7 @@ class QuickSort extends BaseSort {
     let i = esq - 1;
 
     let qRodada =
-      dir - esq + 1 >= 5 &&
-      this.questoes.podeMostrarDinamica("rodada", 2)
+      dir - esq + 1 >= 5 && this.questoes.podeMostrarDinamica("rodada", 2)
         ? Q_ComparacoesRodada(dir - esq + 1, "partição", this.questoes.seed)
         : null;
 
@@ -596,7 +572,7 @@ class QuickSort extends BaseSort {
       this.st.comparacoes++;
 
       let qPivo =
-        this.st.comparacoes % 10 === 0 &&
+        this.st.comparacoes % 3 === 0 &&
         this.questoes.podeMostrarDinamica("predicao", 2)
           ? Q_QuickPivo(pivo, array[j], this.questoes.seed)
           : null;
@@ -632,7 +608,8 @@ class QuickSort extends BaseSort {
                   "trocas acumuladas",
                   this.st.trocas,
                   this.questoes.seed,
-                  array.slice(),
+                  this.arr,
+                  this.questoes.ultimoIndice,
                 )
               : null;
 

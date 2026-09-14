@@ -1,140 +1,261 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Visualizador de Ordenação</title>
-    <link rel="stylesheet" href="style.css"/>
-</head>
-<body>
-    <div class="navbar">    
-        <div class="title">Visualizador de Ordenação</div>
-        <div class="navItems"> 
-            <div>
-                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdskiqTvATCaqmy9xe_NHFZSHCVKtCfX3AGdUFvc1UUndcptg/viewform?usp=publish-editor" target="_blank" rel="noopener noreferrer"><button class="btn btnTipo2">Acessar Formulário</button></a>
-            </div>
-            <div class="botoesAlgoritmos" id="botoesAlgoritmos">
-                <button alg="bubble" class="btn btnTransparente active" data-tip="Compara elementos vizinhos e troca os que estão fora de ordem. A cada passagem completa, o maior valor restante “borbulha” até o fim. Fácil de entender, porém lento: O(n²).">BubbleSort</button>
-                <button alg="selection" class="btn btnTransparente" data-tip="A cada rodada, varre a parte ainda não ordenada para achar o menor valor e o coloca no lugar com uma única troca. Faz sempre ~n² comparações, mas no máximo n−1 trocas.">SelectionSort</button>
-                <button alg="insertion" class="btn btnTransparente" data-tip="Constrói o trecho ordenado da esquerda para a direita, inserindo cada novo elemento na posição certa entre os já ordenados. Muito eficiente quando o vetor já está quase ordenado: O(n).">InsertionSort</button>
-                <button alg="merge" class="btn btnTransparente" data-tip="Divide o vetor ao meio repetidamente até restarem pedaços de 1 elemento e depois intercala os pedaços em ordem. Garante O(n log n) sempre e é estável, mas usa memória auxiliar.">MergeSort</button>
-                <button alg="quick" class="btn btnTransparente" data-tip="Escolhe um pivô e reorganiza o vetor em menores e maiores que ele; em seguida ordena cada lado recursivamente. Rápido na prática (O(n log n) em média), O(n²) no pior caso.">QuickSort</button>
-            </div>
-            <div style="display:flex; gap:8px;" id="grupoInputVetor">
-                <input id="inputVetor" type="text" placeholder="Insira seu vetor [1,7,3,...] ou o tamanho desejado"/>
-                <button id="botaoVetor" class="btn btnTipo1">⟳ Gerar</button>
-            </div>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="navbar">
+      <div class="title">Visualizador de Ordenação</div>
+      <div class="navItems">
+        <div style="display: flex; align-items: center; gap: 8px">
+          <a
+            href="https://docs.google.com/forms/d/e/1FAIpQLSdskiqTvATCaqmy9xe_NHFZSHCVKtCfX3AGdUFvc1UUndcptg/viewform?usp=publish-editor"
+            target="_blank"
+            rel="noopener noreferrer"
+            ><button class="btn btnTipo2">Acessar Formulário</button></a
+          >
+          <button
+            id="btnCopiarSessionId"
+            class="btn btnTransparente"
+            style="padding: 6px 10px; font-size: 12px"
+            title="Copiar ID de sessão para a área de transferência"
+          >
+            Copiar ID
+          </button>
         </div>
+        <div class="botoesAlgoritmos" id="botoesAlgoritmos">
+          <button
+            alg="bubble"
+            class="btn btnTransparente active"
+            data-tip="Compara elementos vizinhos e troca os que estão fora de ordem. A cada passagem completa, o maior valor restante “borbulha” até o fim. Fácil de entender, porém lento: O(n²)."
+          >
+            BubbleSort
+          </button>
+          <button
+            alg="selection"
+            class="btn btnTransparente"
+            data-tip="A cada rodada, varre a parte ainda não ordenada para achar o menor valor e o coloca no lugar com uma única troca. Faz sempre ~n² comparações, mas no máximo n−1 trocas."
+          >
+            SelectionSort
+          </button>
+          <button
+            alg="insertion"
+            class="btn btnTransparente"
+            data-tip="Constrói o trecho ordenado da esquerda para a direita, inserindo cada novo elemento na posição certa entre os já ordenados. Muito eficiente quando o vetor já está quase ordenado: O(n)."
+          >
+            InsertionSort
+          </button>
+          <button
+            alg="merge"
+            class="btn btnTransparente"
+            data-tip="Divide o vetor ao meio repetidamente até restarem pedaços de 1 elemento e depois intercala os pedaços em ordem. Garante O(n log n) sempre e é estável, mas usa memória auxiliar."
+          >
+            MergeSort
+          </button>
+          <button
+            alg="quick"
+            class="btn btnTransparente"
+            data-tip="Escolhe um pivô e reorganiza o vetor em menores e maiores que ele; em seguida ordena cada lado recursivamente. Rápido na prática (O(n log n) em média), O(n²) no pior caso."
+          >
+            QuickSort
+          </button>
+        </div>
+        <div style="display: flex; gap: 8px" id="grupoInputVetor">
+          <input
+            id="inputVetor"
+            type="text"
+            placeholder="Insira seu vetor [1,7,3,...] ou o tamanho desejado"
+          />
+          <button id="botaoVetor" class="btn btnTipo1">⟳ Gerar</button>
+        </div>
+      </div>
     </div>
 
     <div class="layout">
-        <div class="sidebar collapsed" id="barraQuestoes">
-            <button class="btn btnTipo1 toggleSidebar" id="barraToggle">❯</button>
+      <div class="sidebar collapsed" id="barraQuestoes">
+        <button class="btn btnTipo1 toggleSidebar" id="barraToggle">❯</button>
 
-            <div class="sidebarConteudo">
-                <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <div id="questoesCount" style="font-size: 20px; font-weight: 700;">Questões: 0 / 0</div>
-                </div>
-
-                <label class="autoPauseLabel">
-                    <input type="checkbox" id="autoPauseCheck"> Pausar a receber questão
-                </label>
-
-                <div class="questaoAtual" id="questaoAtual">Observando o algoritmo...</div>
-                <div class="questaoStatus" id="questaoStatus"></div>
-                <div class="questaoOpcoes" id="questaoOpcoes"></div>
-                <div class="historico" id="questaoHistorico"></div>  
+        <div class="sidebarConteudo">
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 12px;
+            "
+          >
+            <div id="questoesCount" style="font-size: 20px; font-weight: 700">
+              Questões: 0 / 0
             </div>
+          </div>
+
+          <label class="autoPauseLabel">
+            <input type="checkbox" id="autoPauseCheck" /> Pausar a receber
+            questão
+          </label>
+
+          <div class="questaoAtual" id="questaoAtual">
+            Observando o algoritmo...
+          </div>
+          <div class="questaoStatus" id="questaoStatus"></div>
+          <div class="questaoOpcoes" id="questaoOpcoes"></div>
+          <div class="historico" id="questaoHistorico"></div>
+        </div>
+      </div>
+
+      <div class="visualizacao">
+        <div class="status">
+          <span>Comparações: <strong id="comparacoesCount">0</strong></span>
+          <span>Trocas: <strong id="trocasCount">0</strong></span>
+          <span>Frame: <strong id="frameCount">0</strong></span>
         </div>
 
-        <div class="visualizacao"> 
-            <div class="status">
-                <span>Comparações: <strong id="comparacoesCount">0</strong></span>
-                <span>Trocas: <strong id="trocasCount">0</strong></span>
-                <span>Frame: <strong id="frameCount">0</strong></span>
+        <div class="paineis">
+          <div class="barrasPainel">
+            <div class="barrasLegenda">
+              <span><i class="c normal"></i>Normal</span>
+              <span><i class="c comparando"></i>Comparando</span>
+              <span><i class="c trocando"></i>Trocando</span>
+              <span><i class="c ordenado"></i>Ordenado</span>
+              <span><i class="c pivo"></i>Pivô/Mín.</span>
             </div>
 
-            <div class="paineis"> 
-                <div class="barrasPainel">
-                    <div class="barrasLegenda">
-                        <span><i class="c normal"></i>Normal</span>
-                        <span><i class="c comparando"></i>Comparando</span>
-                        <span><i class="c trocando"></i>Trocando</span>
-                        <span><i class="c ordenado"></i>Ordenado</span>
-                        <span><i class="c pivo"></i>Pivô/Mín.</span>
-                    </div>
+            <div class="barras" id="barras"></div>
+          </div>
 
-                    <div class="barras" id="barras"></div>
-                </div>
-
-                <div class="codigoPainel">
-                    <div class="codigoTopo">
-                        <div class="codigoCabecalho">Pseudocódigo</div>
-                        <div class="codigoModo" role="group" aria-label="Modo de exibição do código">
-                            <button type="button" id="btnModoPseudo" class="modoBtn ativo">Pseudocódigo</button>
-                            <button type="button" id="btnModoExplicativo" class="modoBtn">Explicação</button>
-                        </div>
-                    </div>
-                    <div class="codigo" id="codigo"></div>
-                </div>
+          <div class="codigoPainel">
+            <div class="codigoTopo">
+              <div class="codigoCabecalho">Pseudocódigo</div>
+              <div
+                class="codigoModo"
+                role="group"
+                aria-label="Modo de exibição do código"
+              >
+                <button type="button" id="btnModoPseudo" class="modoBtn ativo">
+                  Pseudocódigo
+                </button>
+                <button type="button" id="btnModoExplicativo" class="modoBtn">
+                  Explicação
+                </button>
+              </div>
             </div>
-
-            <div class="controlesPainel">
-                <div class="controlesSlider">
-                    <div class="containerSlider"> 
-                        <span style="font-size: 14px; color: var(--textMuted); font-weight: bold;">Velocidade:</span>
-                        <input type="range" id="velocidadeSlider" min="1" max="10" value="1" title="Ajusta velocidade">
-                    </div>
-                </div>
-
-                <div class="controlesBotoes">
-                    <button id="botaoAnt" class="btn btnTipo1">◀ Anterior</button>
-                    <button id="botaoPlay" class="btn btnTipo1">▶ Play</button>
-                    <button id="botaoProx" class="btn btnTipo1">Próximo ▶</button>
-                </div>
-            </div>
+            <div class="codigo" id="codigo"></div>
+          </div>
         </div>
+
+        <div class="controlesPainel">
+          <div class="controlesSlider">
+            <div class="containerSlider">
+              <span
+                style="
+                  font-size: 14px;
+                  color: var(--textMuted);
+                  font-weight: bold;
+                "
+                >Velocidade:</span
+              >
+              <input
+                type="range"
+                id="velocidadeSlider"
+                min="1"
+                max="10"
+                value="1"
+                title="Ajusta velocidade"
+              />
+            </div>
+          </div>
+
+          <div class="controlesBotoes">
+            <button id="botaoAnt" class="btn btnTipo1">◀ Anterior</button>
+            <button id="botaoPlay" class="btn btnTipo1">▶ Play</button>
+            <button id="botaoProx" class="btn btnTipo1">Próximo ▶</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="overlayConsentimento" id="overlayConsentimento">
-        <div class="modalConsentimento">
-            <h2>Termo de Consentimento Livre e Esclarecido</h2>
+      <div class="modalConsentimento">
+        <h2>Termo de Consentimento Livre e Esclarecido</h2>
 
-            <div class="modalConsentimentoTexto">
-                <p>Você está sendo convidado(a) a participar de uma pesquisa acadêmica, desenvolvida como parte de um Trabalho de Conclusão de Curso (TCC), cujo objetivo é avaliar o uso desta ferramenta de visualização de algoritmos de ordenação como recurso de apoio ao ensino.</p>
+        <div class="modalConsentimentoTexto">
+          <p>
+            Você está sendo convidado(a) a participar de uma pesquisa acadêmica,
+            desenvolvida como parte de um Trabalho de Conclusão de Curso (TCC),
+            cujo objetivo é avaliar o uso desta ferramenta de visualização de
+            algoritmos de ordenação como recurso de apoio ao ensino.
+          </p>
 
-                <p><strong>Participação voluntária.</strong> Sua participação é inteiramente voluntária. Você pode deixar de usar a plataforma a qualquer momento, sem qualquer prejuízo, penalidade ou necessidade de justificativa.</p>
+          <p>
+            <strong>Participação voluntária.</strong> Sua participação é
+            inteiramente voluntária. Você pode deixar de usar a plataforma a
+            qualquer momento, sem qualquer prejuízo, penalidade ou necessidade
+            de justificativa.
+          </p>
 
-                <p><strong>Anonimato.</strong> A plataforma não solicita nem armazena seu nome, e-mail ou qualquer outro dado que permita identificá-lo(a) pessoalmente. Suas interações (algoritmo escolhido, navegação entre etapas, respostas às perguntas) são associadas apenas a um identificador de sessão gerado aleatoriamente pelo seu navegador.</p>
+          <p>
+            <strong>Anonimato.</strong> A plataforma não solicita nem armazena
+            seu nome, e-mail ou qualquer outro dado que permita identificá-lo(a)
+            pessoalmente. Suas interações (algoritmo escolhido, navegação entre
+            etapas, respostas às perguntas) são associadas apenas a um
+            identificador de sessão gerado aleatoriamente pelo seu navegador.
+          </p>
 
-                <p><strong>Confidencialidade.</strong> Os dados coletados serão utilizados exclusivamente para fins desta pesquisa acadêmica, analisados de forma agregada, e não serão compartilhados com terceiros fora do contexto deste trabalho.</p>
+          <p>
+            <strong>Confidencialidade.</strong> Os dados coletados serão
+            utilizados exclusivamente para fins desta pesquisa acadêmica,
+            analisados de forma agregada, e não serão compartilhados com
+            terceiros fora do contexto deste trabalho.
+          </p>
 
-                <p><strong>Riscos e benefícios.</strong> Não há riscos previsíveis além dos associados ao uso comum de um site educacional. Como benefício, você tem acesso gratuito a uma ferramenta interativa de estudo de algoritmos de ordenação.</p>
+          <p>
+            <strong>Riscos e benefícios.</strong> Não há riscos previsíveis além
+            dos associados ao uso comum de um site educacional. Como benefício,
+            você tem acesso gratuito a uma ferramenta interativa de estudo de
+            algoritmos de ordenação.
+          </p>
 
-                <p>Em caso de dúvidas sobre esta pesquisa, você pode entrar em contato com <strong>João Marcos Nascimento</strong>, pelo e-mail <strong>joao.nascimento@fagammon.edu.br</strong>, sob orientação de Luccas Rafael Martins Pinto.</p>
+          <p>
+            Em caso de dúvidas sobre esta pesquisa, você pode entrar em contato
+            com <strong>João Marcos Nascimento</strong>, pelo e-mail
+            <strong>joao.nascimento@fagammon.edu.br</strong>, sob orientação de
+            Luccas Rafael Martins Pinto.
+          </p>
 
-                <p>Ao marcar a caixa abaixo e clicar em "Eu concordo", você declara que leu e compreendeu estas informações e concorda em participar voluntariamente desta pesquisa.</p>
-            </div>
-
-            <label class="consentimentoCheckLabel">
-                <input type="checkbox" id="consentimentoCheck">
-                Li e compreendi as informações acima, e concordo em participar voluntariamente desta pesquisa.
-            </label>
-
-            <button id="btnConsentimentoOk" class="btn btnTipo1" disabled>Eu concordo</button>
+          <p>
+            Ao marcar a caixa abaixo e clicar em "Eu concordo", você declara que
+            leu e compreendeu estas informações e concorda em participar
+            voluntariamente desta pesquisa.
+          </p>
         </div>
+
+        <label class="consentimentoCheckLabel">
+          <input type="checkbox" id="consentimentoCheck" />
+          Li e compreendi as informações acima, e concordo em participar
+          voluntariamente desta pesquisa.
+        </label>
+
+        <button id="btnConsentimentoOk" class="btn btnTipo1" disabled>
+          Eu concordo
+        </button>
+      </div>
     </div>
 
     <div class="overlayTutorial" id="overlayTutorial">
-        <div class="tutorialSpot" id="tutorialSpot"></div>
-        <div class="tutorialCaixa" id="tutorialCaixa">
-            <div class="tutorialTexto" id="tutorialTexto"></div>
-            <div class="tutorialRodape">
-                <button id="btnTutorialPular" class="btn btnTransparente">Pular tutorial</button>
-                <div class="tutorialProgresso" id="tutorialProgresso"></div>
-                <button id="btnTutorialProx" class="btn btnTipo1">Próximo ▶</button>
-            </div>
+      <div class="tutorialSpot" id="tutorialSpot"></div>
+      <div class="tutorialCaixa" id="tutorialCaixa">
+        <div class="tutorialTexto" id="tutorialTexto"></div>
+        <div class="tutorialRodape">
+          <button id="btnTutorialPular" class="btn btnTransparente">
+            Pular tutorial
+          </button>
+          <div class="tutorialProgresso" id="tutorialProgresso"></div>
+          <button id="btnTutorialProx" class="btn btnTipo1">Próximo ▶</button>
         </div>
+      </div>
     </div>
 
     <script defer src="tutorial.js"></script>
@@ -142,6 +263,5 @@
     <script defer src="questoes.js"></script>
     <script defer src="engine.js"></script>
     <script defer src="visualizacao.js"></script>
-
-</body>
+  </body>
 </html>

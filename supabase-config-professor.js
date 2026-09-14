@@ -6,6 +6,6 @@ export const supabase = createClient(
   {
     auth: {
       storageKey: "painel-professor-auth",
-    }
-  }
+    },
+  },
 );

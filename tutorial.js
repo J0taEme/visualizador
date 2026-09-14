@@ -34,7 +34,7 @@
   btnConsentimentoOk.addEventListener("click", () => {
     if (!checkConsentimento.checked) return;
 
-    localStorage.setItem(CHAVE_CONSENTIMENTO, "1");
+    sessionStorage.setItem(CHAVE_CONSENTIMENTO, "1");
     fecharConsentimento();
     iniciarTutorialSePrimeiraVez();
   });
@@ -92,7 +92,7 @@
   }
 
   function iniciarTutorialSePrimeiraVez() {
-    if (localStorage.getItem(CHAVE_TUTORIAL)) return;
+    if (sessionStorage.getItem(CHAVE_TUTORIAL)) return;
 
     definirPassos();
     passoAtual = 0;
@@ -158,7 +158,7 @@
 
     overlayTutorial.classList.remove("ativo");
     document.body.classList.remove("bloqueado");
-    localStorage.setItem(CHAVE_TUTORIAL, "1");
+    sessionStorage.setItem(CHAVE_TUTORIAL, "1");
   }
 
   btnTutorialProx.addEventListener("click", () => {
@@ -174,7 +174,7 @@
     }
   });
 
-  if (!localStorage.getItem(CHAVE_CONSENTIMENTO)) {
+  if (!sessionStorage.getItem(CHAVE_CONSENTIMENTO)) {
     abrirConsentimento();
   } else {
     iniciarTutorialSePrimeiraVez();

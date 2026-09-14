@@ -69,7 +69,7 @@ function Q_PredicaoTroca(v1, v2, seed) {
       `Haverá troca, pois ${v1} é maior que ${v2}.`,
       `Não haverá troca, pois já estão na ordem certa.`,
       `Não haverá troca, pois ${v1} é maior — e maiores ficam à frente.`,
-      `Haverá troca, pois ${v2} é maior que ${v1}.`,
+      `Haverá troca, pois o algoritmo troca a cada comparação feita.`,
     ],
     s,
   );
@@ -99,8 +99,8 @@ function Q_SelectionMin(minAtual, avaliado, seed) {
     [
       `Sim, ${avaliado} passará a ser o novo menor.`,
       `Não, ${minAtual} continua sendo o menor provisório.`,
-      `Não, pois ${minAtual} é menor que ${avaliado}.`,
-      `Sim, pois todo novo elemento analisado substitui o menor.`,
+      `Sim, pois todo elemento analisado substitui o menor provisório.`,
+      `Não, pois o menor provisório só pode mudar no fim da rodada.`,
     ],
     s,
   );
@@ -180,7 +180,14 @@ function Q_QuickPivo(pivo, atual, seed) {
   return q;
 }
 
-function Q_Contagem(tipo, valorAtual, seed, vetorInicial = null) {
+const VARIACOES_METRICA = [
+  (t) => `Sem olhar o placar no topo da tela: quantas ${t} o algoritmo já realizou até aqui?`,
+  (t) => `Acompanhando a execução desde o início, qual é o total de ${t} neste ponto?`,
+  (t) => `Cubra o contador e responda de memória: quantas ${t} já aconteceram até este frame?`,
+  (t) => `Somando tudo o que o algoritmo fez desde o primeiro passo, quantas ${t} foram feitas?`,
+];
+
+function Q_Contagem(tipo, valorAtual, seed, vetorInicial = null, variacaoIdx = 0) {
   const s = gerarSeed(
     [tipo, valorAtual, vetorInicial ? vetorInicial.join(",") : "sem_vetor"],
     seed,
@@ -209,7 +216,7 @@ function Q_Contagem(tipo, valorAtual, seed, vetorInicial = null) {
 
   const q = makeQuest({
     tipo: "metrica",
-    enunciado: `Análise de Métricas: ${vetorStr}Esconda o placar com a mão e tente descobrir! Quantas ${tipo} o algoritmo já precisou realizar até este momento exato?`,
+    enunciado: `Análise de Métricas: ${vetorStr}${VARIACOES_METRICA[variacaoIdx % VARIACOES_METRICA.length](tipo)}`,
     opcoes: opcoes,
     explicacao: `O contador de ${tipo}, no topo da tela, marcava ${valorAtual} neste frame — é o total acumulado desde o início.`,
   });
@@ -260,11 +267,19 @@ function Q_InsertionDeslocamentos(seed, dados) {
   return q;
 }
 
-function Q_JaFixadas(padrao, k, nomeAlg, seed) {
+const VARIACOES_INVARIANTE = [
+  "Sobre as barras que já ocupam posição definitiva neste momento, o que é correto afirmar?",
+  "Neste ponto da execução, onde estão as barras cuja posição já não muda mais?",
+  "Observando o vetor agora, qual afirmação descreve corretamente as posições já garantidas?",
+  "Considerando o que o algoritmo já processou, o que se pode garantir sobre as posições finais?",
+];
+
+function Q_JaFixadas(padrao, k, nomeAlg, seed, variacaoIdx = 0) {
   const s = gerarSeed(["ja_fixadas", padrao, k, nomeAlg], seed);
 
   const OPC = {
-    esquerda: "As barras já fixas ficam todas à esquerda (nas primeiras posições).",
+    esquerda:
+      "As barras já fixas ficam todas à esquerda (nas primeiras posições).",
     direita: "As barras já fixas ficam todas à direita (nas últimas posições).",
     espalhado:
       "As barras já fixas ficam espalhadas pelo vetor, não agrupadas num lado.",
@@ -285,11 +300,15 @@ function Q_JaFixadas(padrao, k, nomeAlg, seed) {
   };
 
   const contagem =
-    k > 0 ? `Até agora ${k} barra(s) já foram colocadas na posição final. ` : "";
+    k > 0
+      ? `Até agora ${k} barra(s) já foram colocadas na posição final. `
+      : "";
+  const variacao =
+    VARIACOES_INVARIANTE[(variacaoIdx + k) % VARIACOES_INVARIANTE.length];
 
   const q = makeQuest({
     tipo: "invariante",
-    enunciado: `${contagem}Sobre as barras que já ocupam posição definitiva neste momento, o que é correto afirmar?`,
+    enunciado: `${contagem}${variacao}`,
     opcoes: opcoes,
     explicacao: EXPL[padrao],
   });
@@ -355,27 +374,31 @@ function Q_ComparacoesRodada(tamTrecho, unidade, seed) {
 }
 
 class GerenciadorQuestoes {
-  constructor(algoritmo, arr) {
-    this.algoritmo = algoritmo;
-    this.arr = arr;
+  constructor(arr) {
     this.seed = gerarSeed(arr, 0);
     this.contadoresDinamica = {};
-  }
-
-  preExecucao() {
-    return [];
-  }
-
-  questaoFinal(nomeAlg, frame) {
-    return null;
+    this.emitidasPorTipo = {};
+    this.totalEmitidas = 0;
+    this.ultimoIndice = 0;
+    this.COTA_POR_TIPO = 2;
+    this.COTA_TOTAL = 8;
   }
 
   podeMostrarDinamica(tipo, aCada) {
     if (!this.contadoresDinamica[tipo]) {
       this.contadoresDinamica[tipo] = 0;
     }
-    const resultado = this.contadoresDinamica[tipo] % aCada === 0;
+    const naVez = this.contadoresDinamica[tipo] % aCada === 0;
     this.contadoresDinamica[tipo]++;
-    return resultado;
+    if (!naVez) return false;
+
+    const jaEmitidas = this.emitidasPorTipo[tipo] || 0;
+    if (jaEmitidas >= this.COTA_POR_TIPO) return false;
+    if (this.totalEmitidas >= this.COTA_TOTAL) return false;
+
+    this.emitidasPorTipo[tipo] = jaEmitidas + 1;
+    this.totalEmitidas++;
+    this.ultimoIndice = this.emitidasPorTipo[tipo];
+    return true;
   }
 }

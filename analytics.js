@@ -1,10 +1,10 @@
 import { supabase } from "./supabase-config.js";
 
 const sessionId =
-  sessionStorage.getItem("sessionId") ||
+  localStorage.getItem("sessionId") ||
   (() => {
     const id = "aluno_" + Math.random().toString(36).slice(2, 10);
-    sessionStorage.setItem("sessionId", id);
+    localStorage.setItem("sessionId", id);
     return id;
   })();
 
@@ -41,4 +41,20 @@ const Tracker = {
 };
 
 window.Tracker = Tracker;
-export { Tracker };
+
+const btnCopiarSessionId = document.getElementById("btnCopiarSessionId");
+if (btnCopiarSessionId) {
+  const textoOriginal = btnCopiarSessionId.textContent;
+  btnCopiarSessionId.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(sessionId);
+      btnCopiarSessionId.textContent = "✅ Copiado!";
+    } catch (e) {
+      console.error("Erro ao copiar ID de sessão:", e);
+      btnCopiarSessionId.textContent = "Erro ao copiar";
+    }
+    setTimeout(() => {
+      btnCopiarSessionId.textContent = textoOriginal;
+    }, 1500);
+  });
+}

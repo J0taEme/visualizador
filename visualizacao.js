@@ -5,7 +5,10 @@ const codigos = {
       linhas: [
         { linha: 1, texto: "compara cada par de barras vizinhas" },
         { linha: 2, texto: "se estão fora de ordem, troca as duas" },
-        { linha: 3, texto: "ao fim da passagem, a maior fica no lugar (verde)" },
+        {
+          linha: 3,
+          texto: "ao fim da passagem, a maior fica no lugar (verde)",
+        },
         { linha: 4, texto: "recomeça ignorando a parte já ordenada" },
       ],
     },
@@ -24,7 +27,10 @@ const codigos = {
     titulo: "SELECTION SORT",
     explicativo: {
       linhas: [
-        { linha: 1, texto: "da posição atual em diante, procura o menor valor" },
+        {
+          linha: 1,
+          texto: "da posição atual em diante, procura o menor valor",
+        },
         { linha: 2, texto: "marca o 1º como menor provisório (roxo)" },
         { linha: 3, texto: "percorre o resto comparando com o menor atual" },
         { linha: 4, texto: "achou um menor? ele vira o novo menor (roxo)" },
@@ -302,8 +308,7 @@ function aplicarModoCodigo(novo, salvar = true) {
   if (salvar) {
     try {
       localStorage.setItem(CHAVE_MODO_CODIGO, novo);
-    } catch (e) {
-    }
+    } catch (e) {}
     logEvento("MUDAR_MODO_CODIGO", { modo: novo });
   }
   refs.btnModoExplicativo.classList.toggle("ativo", novo === "explicativo");
@@ -575,6 +580,7 @@ refs.inputVetor.addEventListener("keydown", (e) => {
 
 refs.botaoProx.addEventListener("click", () => {
   if (frameAtual < frames.length - 1) {
+    pausarAutoplay("navegacao_manual");
     logEvento("AVANCAR_FRAME", { metodo: "botao" });
     frameAtual++;
     renderizar();
@@ -582,6 +588,7 @@ refs.botaoProx.addEventListener("click", () => {
 });
 refs.botaoAnt.addEventListener("click", () => {
   if (frameAtual > 0) {
+    pausarAutoplay("navegacao_manual");
     logEvento("VOLTAR_FRAME", { metodo: "botao" });
     frameAtual--;
     renderizar();
@@ -627,11 +634,13 @@ document.addEventListener("keydown", (e) => {
   if (document.body.classList.contains("bloqueado")) return;
 
   if (e.key === "ArrowRight" && frameAtual < frames.length - 1) {
+    pausarAutoplay("navegacao_manual");
     logEvento("AVANCAR_FRAME", { metodo: "teclado" });
     frameAtual++;
     renderizar();
   }
   if (e.key === "ArrowLeft" && frameAtual > 0) {
+    pausarAutoplay("navegacao_manual");
     logEvento("VOLTAR_FRAME", { metodo: "teclado" });
     frameAtual--;
     renderizar();
