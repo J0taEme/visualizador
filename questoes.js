@@ -89,10 +89,14 @@ function Q_PredicaoTroca(v1, v2, seed) {
 }
 
 const VARIACOES_SELECTION = [
-  (m, a) => `O menor valor provisório registrado é ${m}. Ao compará-lo com a barra atual (${a}), o título de "menor valor" vai mudar?`,
-  (m, a) => `Até aqui o menor da rodada é ${m}. A barra atual vale ${a}: o mínimo provisório será substituído?`,
-  (m, a) => `O algoritmo guarda ${m} como menor valor desta rodada e agora examina a barra ${a}. Haverá troca de mínimo?`,
-  (m, a) => `Comparando o mínimo provisório (${m}) com a barra em análise (${a}), o algoritmo passa a guardar outro valor?`,
+  (m, a) =>
+    `O menor valor provisório registrado é ${m}. Ao compará-lo com a barra atual (${a}), o título de "menor valor" vai mudar?`,
+  (m, a) =>
+    `Até aqui o menor da rodada é ${m}. A barra atual vale ${a}: o mínimo provisório será substituído?`,
+  (m, a) =>
+    `O algoritmo guarda ${m} como menor valor desta rodada e agora examina a barra ${a}. Haverá troca de mínimo?`,
+  (m, a) =>
+    `Comparando o mínimo provisório (${m}) com a barra em análise (${a}), o algoritmo passa a guardar outro valor?`,
 ];
 
 function Q_SelectionMin(minAtual, avaliado, seed, variacaoIdx = 0) {
@@ -114,7 +118,10 @@ function Q_SelectionMin(minAtual, avaliado, seed, variacaoIdx = 0) {
 
   const q = makeQuest({
     tipo: "analise",
-    enunciado: VARIACOES_SELECTION[variacaoIdx % VARIACOES_SELECTION.length](minAtual, avaliado),
+    enunciado: VARIACOES_SELECTION[variacaoIdx % VARIACOES_SELECTION.length](
+      minAtual,
+      avaliado,
+    ),
     opcoes: opcoes,
     explicacao: trocaMin
       ? `${avaliado} é menor que o mínimo provisório ${minAtual}, então ${avaliado} assume o lugar de menor.`
@@ -188,13 +195,23 @@ function Q_QuickPivo(pivo, atual, seed) {
 }
 
 const VARIACOES_METRICA = [
-  (t) => `Sem olhar o placar no topo da tela: quantas ${t} o algoritmo já realizou até aqui?`,
-  (t) => `Acompanhando a execução desde o início, qual é o total de ${t} neste ponto?`,
-  (t) => `Cubra o contador e responda de memória: quantas ${t} já aconteceram até este frame?`,
-  (t) => `Somando tudo o que o algoritmo fez desde o primeiro passo, quantas ${t} foram feitas?`,
+  (t) =>
+    `Sem olhar o placar no topo da tela: quantas ${t} o algoritmo já realizou até aqui?`,
+  (t) =>
+    `Acompanhando a execução desde o início, qual é o total de ${t} neste ponto?`,
+  (t) =>
+    `Cubra o contador e responda de memória: quantas ${t} já aconteceram até este frame?`,
+  (t) =>
+    `Somando tudo o que o algoritmo fez desde o primeiro passo, quantas ${t} foram feitas?`,
 ];
 
-function Q_Contagem(tipo, valorAtual, seed, vetorInicial = null, variacaoIdx = 0) {
+function Q_Contagem(
+  tipo,
+  valorAtual,
+  seed,
+  vetorInicial = null,
+  variacaoIdx = 0,
+) {
   const s = gerarSeed(
     [tipo, valorAtual, vetorInicial ? vetorInicial.join(",") : "sem_vetor"],
     seed,
@@ -381,10 +398,14 @@ function Q_ComparacoesRodada(tamTrecho, unidade, seed) {
 }
 
 const VARIACOES_PROJECAO = [
-  (k) => `Olhando para as barras à frente: nas próximas ${k} comparações desta passagem, quantas vão resultar em troca?`,
-  (k) => `Sem avançar a animação, projete os próximos passos: das ${k} comparações seguintes, quantas terminam em troca?`,
-  (k) => `Se o algoritmo seguisse mais ${k} comparações nesta passagem, em quantas delas as barras trocariam de lugar?`,
-  (k) => `Antes de continuar: entre as ${k} próximas comparações desta passagem, quantas provocam uma troca?`,
+  (k) =>
+    `Olhando para as barras à frente: nas próximas ${k} comparações desta passagem, quantas vão resultar em troca?`,
+  (k) =>
+    `Sem avançar a animação, projete os próximos passos: das ${k} comparações seguintes, quantas terminam em troca?`,
+  (k) =>
+    `Se o algoritmo seguisse mais ${k} comparações nesta passagem, em quantas delas as barras trocariam de lugar?`,
+  (k) =>
+    `Antes de continuar: entre as ${k} próximas comparações desta passagem, quantas provocam uma troca?`,
 ];
 
 function Q_TrocasJanela(array, inicio, limiteJ, k, seed, variacaoIdx = 0) {
@@ -411,10 +432,14 @@ function Q_TrocasJanela(array, inicio, limiteJ, k, seed, variacaoIdx = 0) {
 }
 
 const VARIACOES_DIVISAO = [
-  (n) => `O trecho destacado tem ${n} barras e será dividido ao meio antes de qualquer comparação. Quantas barras ficarão na metade da ESQUERDA?`,
-  (n) => `Antes de intercalar, o algoritmo precisa quebrar este trecho de ${n} barras em duas partes. Quantas barras vão para a parte da ESQUERDA?`,
-  (n) => `Este trecho de ${n} barras está prestes a ser dividido. Qual será o tamanho da metade da ESQUERDA?`,
-  (n) => `O Merge Sort vai partir ao meio o trecho destacado, que tem ${n} barras. Com quantas barras fica o lado ESQUERDO?`,
+  (n) =>
+    `O trecho destacado tem ${n} barras e será dividido ao meio antes de qualquer comparação. Quantas barras ficarão na metade da ESQUERDA?`,
+  (n) =>
+    `Antes de intercalar, o algoritmo precisa quebrar este trecho de ${n} barras em duas partes. Quantas barras vão para a parte da ESQUERDA?`,
+  (n) =>
+    `Este trecho de ${n} barras está prestes a ser dividido. Qual será o tamanho da metade da ESQUERDA?`,
+  (n) =>
+    `O Merge Sort vai partir ao meio o trecho destacado, que tem ${n} barras. Com quantas barras fica o lado ESQUERDO?`,
 ];
 
 function Q_MergeDivisao(tamTrecho, seed, variacaoIdx = 0) {
@@ -438,7 +463,8 @@ function Q_MergeDivisao(tamTrecho, seed, variacaoIdx = 0) {
   );
   const q = makeQuest({
     tipo: "divisao",
-    enunciado: VARIACOES_DIVISAO[variacaoIdx % VARIACOES_DIVISAO.length](tamTrecho),
+    enunciado:
+      VARIACOES_DIVISAO[variacaoIdx % VARIACOES_DIVISAO.length](tamTrecho),
     opcoes: opcoes,
     explicacao:
       tamTrecho % 2 === 0
@@ -460,9 +486,13 @@ class GerenciadorQuestoes {
     this.ultimoIndice = 0;
     this.COTA_POR_TIPO = 2;
     this.COTA_TOTAL = 8;
-    // tipos custosos para o aluno recebem cota menor
-    this.COTA_ESPECIFICA = { trocas: 1, comparacoes: 1, "trocas definitivas": 1,
-      "trocas adjacentes": 1, "trocas acumuladas": 1 };
+    this.COTA_ESPECIFICA = {
+      trocas: 1,
+      comparacoes: 1,
+      "trocas definitivas": 1,
+      "trocas adjacentes": 1,
+      "trocas acumuladas": 1,
+    };
   }
 
   preExecucao() {

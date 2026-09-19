@@ -695,6 +695,10 @@ body.bloqueado {
   pointer-events: none;
 }
 
+.tutorialSpot.semDestaque {
+  border-color: transparent;
+}
+
 .tutorialCaixa {
   position: fixed;
   width: 320px;
@@ -712,6 +716,10 @@ body.bloqueado {
     left 0.3s ease;
 }
 
+.tutorialCaixa.tutorialFinal {
+  width: 440px;
+}
+
 .tutorialTexto {
   font-size: 14px;
   line-height: 1.6;
@@ -723,6 +731,12 @@ body.bloqueado {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+}
+
+.tutorialNav {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .tutorialProgresso {
@@ -805,4 +819,7 @@ body.bloqueado {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+}
+.tutorialTexto {
+  white-space: pre-line;
 }

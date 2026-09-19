@@ -101,7 +101,14 @@ class BubbleSort extends BaseSort {
             st.trocas % 8 === 0 &&
             j + 4 <= n - i - 1 &&
             this.questoes.podeMostrarDinamica("projecao", 2)
-              ? Q_TrocasJanela(array, j + 1, n - i - 2, 3, this.questoes.seed, this.questoes.ultimoIndice)
+              ? Q_TrocasJanela(
+                  array,
+                  j + 1,
+                  n - i - 2,
+                  3,
+                  this.questoes.seed,
+                  this.questoes.ultimoIndice,
+                )
               : null;
           this.addFrame(frames, array, st, {
             trocando: [j, j + 1],
@@ -173,7 +180,12 @@ class SelectionSort extends BaseSort {
         let qComp =
           st.comparacoes % 9 === 0 &&
           this.questoes.podeMostrarDinamica("predicao", 2)
-            ? Q_SelectionMin(array[minIdx], array[j], this.questoes.seed, this.questoes.ultimoIndice)
+            ? Q_SelectionMin(
+                array[minIdx],
+                array[j],
+                this.questoes.seed,
+                this.questoes.ultimoIndice,
+              )
             : null;
         this.addFrame(frames, array, st, {
           comparando: [j],
@@ -306,7 +318,13 @@ class InsertionSort extends BaseSort {
         i >= 3 &&
         i % 4 === 2 &&
         this.questoes.podeMostrarDinamica("invariante", 1)
-          ? Q_JaFixadas("nenhum", 0, "Insertion Sort", this.questoes.seed, this.questoes.ultimoIndice)
+          ? Q_JaFixadas(
+              "nenhum",
+              0,
+              "Insertion Sort",
+              this.questoes.seed,
+              this.questoes.ultimoIndice,
+            )
           : null;
 
       this.addFrame(frames, array, st, {
@@ -348,8 +366,7 @@ class MergeSort extends BaseSort {
     const subarray = Array.from({ length: dir - esq + 1 }, (_, x) => esq + x);
 
     const qDiv =
-      dir - esq + 1 >= 4 &&
-      this.questoes.podeMostrarDinamica("divisao", 1)
+      dir - esq + 1 >= 4 && this.questoes.podeMostrarDinamica("divisao", 1)
         ? Q_MergeDivisao(
             dir - esq + 1,
             this.questoes.seed,
@@ -461,7 +478,13 @@ class MergeSort extends BaseSort {
     let qInv =
       this.st.comparacoes % 5 === 0 &&
       this.questoes.podeMostrarDinamica("invariante", 2)
-        ? Q_JaFixadas("nenhum", 0, "Merge Sort", this.questoes.seed, this.questoes.ultimoIndice)
+        ? Q_JaFixadas(
+            "nenhum",
+            0,
+            "Merge Sort",
+            this.questoes.seed,
+            this.questoes.ultimoIndice,
+          )
         : null;
 
     pintar();

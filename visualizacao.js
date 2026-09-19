@@ -497,7 +497,7 @@ function pausarAutoplay(motivo = "usuario") {
   }
 }
 
-function gerarVetorAleatorio(tamanho, min = 1, max = 30) {
+function gerarVetorAleatorio(tamanho, min = 0, max = 30) {
   const intervalo = max - min + 1;
   const total = Math.min(tamanho, intervalo);
   const pool = Array.from({ length: intervalo }, (_, i) => min + i);
@@ -517,7 +517,7 @@ function atualizarVetorDaEntrada() {
     : [];
 
   if (partes.length === 0) {
-    vetorAtual = gerarVetorAleatorio(8);
+    vetorAtual = gerarVetorAleatorio(12);
   } else if (partes.length === 1 && /^\d+$/.test(partes[0])) {
     const tamanho = parseInt(partes[0], 10);
 
@@ -540,8 +540,8 @@ function atualizarVetorDaEntrada() {
 
     const numeros = partes.map(Number);
 
-    if (numeros.some((n) => n < 1 || n > 30)) {
-      alert("Insira apenas números entre 1 e 30.");
+    if (numeros.some((n) => n < 0 || n > 30)) {
+      alert("Insira apenas números entre 0 e 30.");
       return false;
     }
 
